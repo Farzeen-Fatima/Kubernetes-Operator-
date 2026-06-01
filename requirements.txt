@@ -1,0 +1,16 @@
+# Kubernetes Operator Framework - Pythonic approach
+kopf==1.37.2
+
+# Official Kubernetes Python Client
+kubernetes==29.0.0
+
+# Additional dependencies for production
+pyyaml==6.0.1
+
+# Logging and monitoring
+structlog==24.1.0
+
+# For better async handling (kopf uses asyncio)
+aiohttp==3.9.3
+# For testing
+pytest==8.1.1

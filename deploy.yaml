@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webpage-operator
+  namespace: default
+  labels:
+    app: webpage-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webpage-operator
+  template:
+    metadata:
+      labels:
+        app: webpage-operator
+    spec:
+      # Use the ServiceAccount we created in rbac.yaml
+      serviceAccountName: webpage-operator
+
+      containers:
+        - name: operator
+          # Replace with your actual image registry and tag
+          # Example: docker.io/yourusername/webpage-operator:latest
+          image: webpage-operator:latest
+          imagePullPolicy: IfNotPresent
+
+          # Resource limits for production
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+          # Environment variables
+          env:
+            - name: LOG_LEVEL
+              value: "INFO"
+
+          # Security context for non-root execution
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            # Must be false — Python and Kopf write temp files at runtime.
+            # readOnlyRootFilesystem: true would cause the operator to crash
+            # immediately on startup.
+            readOnlyRootFilesystem: false
+
+          # Liveness probe — restarts the pod if the health server stops responding
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
+
+          # Readiness probe — holds traffic until the operator is initialised
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10

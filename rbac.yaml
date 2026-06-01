@@ -1,0 +1,123 @@
+---
+# ServiceAccount for the operator
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: webpage-operator
+  namespace: default
+
+---
+# ClusterRole defining permissions the operator needs
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: webpage-operator-role
+rules:
+  # Permission to watch and manage WebPage custom resources
+  - apiGroups:
+      - devops.example.com
+    resources:
+      - webpages
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  
+  # Permission to update WebPage status
+  - apiGroups:
+      - devops.example.com
+    resources:
+      - webpages/status
+    verbs:
+      - get
+      - patch
+      - update
+  
+  # Permission to manage ConfigMaps
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  
+  # Permission to manage Deployments
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  
+  # Permission to manage Services
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  
+  # Permission to read pods (useful for debugging)
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  
+  # Kopf framework needs these permissions for coordination
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  
+  # Kopf uses this for operator peering/coordination
+  - apiGroups:
+      - kopf.dev
+    resources:
+      - clusterkopfpeerings
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+      - create
+
+---
+# ClusterRoleBinding to grant the operator ServiceAccount the permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: webpage-operator-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: webpage-operator-role
+subjects:
+  - kind: ServiceAccount
+    name: webpage-operator
+    namespace: default
