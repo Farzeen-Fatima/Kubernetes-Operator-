@@ -23,6 +23,23 @@ webpage-operator/
 ├── example-webpage.yaml    # Example WebPage resource
 └── README.md              # This file
 ```
+## Demo
+
+**All resources provisioned automatically from a single YAML:**
+
+![Resources Created](docs/images/01-resources-created.png)
+
+**HTML content served live via Nginx + ConfigMap:**
+
+![Browser](docs/images/02-browser.png)
+
+**Scaling from 2 → 3 replicas with a single patch command:**
+
+![Scaling](docs/images/03-scaling.png)
+
+**Operator reconciliation logs:**
+
+![Logs](docs/images/04-operator-logs.png)
 
 ## 🚀 Quick Start
 
@@ -323,15 +340,3 @@ kubectl apply -f deploy.yaml -n webpage-operator-system
 3. Make your changes
 4. Add tests
 5. Submit a pull request
-
-## 📄 License
-
-MIT License - feel free to use this in your projects!
-
-## 🙋 Support
-
-For issues, questions, or contributions, please open an issue on GitHub.
-
----
-
-**Built with ❤️ using Kopf and Kubernetes**
